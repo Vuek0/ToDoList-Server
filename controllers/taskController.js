@@ -31,7 +31,6 @@ const getTasks = (req, res) => {
           res.json({
             message: err.message,
           });
-          console.log(err);
         });
     } else {
       res.json({
@@ -107,25 +106,34 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  const { _id } = req.body;
   if (req.query.key === process.env.API_KEY) {
-    Task.findByIdAndDelete(_id)
-      .then(() => {
-        res
-          .json({
-            status: 200,
-            response: "Task deleted succesfull",
-          })
-          .status(200);
-      })
-      .catch((err) => {
-        res
-          .json({
-            status: 500,
-            response: err.message,
-          })
-          .status(500);
-      });
+    if (req.query._id) {
+      Task.findByIdAndDelete(req.query._id)
+        .then((data) => {
+          res
+            .json({
+              status: 200,
+              message: "Task deleted succesfull",
+              data: data,
+            })
+            .status(200);
+        })
+        .catch((err) => {
+          res
+            .json({
+              status: 500,
+              message: err.message,
+            })
+            .status(500);
+        });
+    } else {
+      res
+        .json({
+          status: 400,
+          message: "Task Id required",
+        })
+        .status(400);
+    }
   } else if (req.query.key !== process.env.API_KEY) {
     res.status(403).send("Invalid Api Key");
   } else {
