@@ -66,6 +66,8 @@ const getUsers = async (req, res) => {
 
 const createUser = (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  console.log("yes");
   const { login, password } = req.body;
   if (req.query.key === process.env.API_KEY) {
     let isAllow = true;
